@@ -31,39 +31,3 @@ void inverte(std::stack<char>* p)
         transfer(p1, *p, n - i - 1);
     }
 }
-
-int main()
-{
-    std::stack<char> q;
-
-    // Insert elements
-    q.push('a');
-    q.push('b');
-    q.push('c');
-    q.push('d');
-    q.push('e');
-
-    while (!q.empty()) {
-        cout << q.top() << " ";
-        q.pop();
-    }
-    printf("\n");
-
-    // Insert elements
-    q.push('a');
-    q.push('b');
-    q.push('c');
-    q.push('d');
-    q.push('e');
-
-    inverte(&q);
-    //printf("%d\n", q.size());
-
-    // Print the queue
-    while (!q.empty()) {
-        cout << q.top() << " ";
-        q.pop();
-    }
-
-    return 0;
-}

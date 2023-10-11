@@ -1,6 +1,6 @@
 #include <iostream>
 #include <queue>
-
+int produto = 1;
 class No
 {
 public:
@@ -31,19 +31,6 @@ public:
 
 		return soma_esquerda + soma_direita;
 	}
-
-    int produtodosnos(No *no)
-    {
-        if (no == nullptr)
-            return 1;
-
-        if (no->esq == nullptr && no->dir == nullptr)
-            return no->chave;
-        else
-        {
-            return produtodosnos(no->esq) * produtodosnos(no->dir);;
-        }
-    }
 
     void preordem(No *no)
     {
@@ -110,7 +97,7 @@ public:
     }
 
 
-    int encontraraltura(No* no, int n, int h)
+    int encontraraltura(No* no, int n)
     {
         if(no == nullptr)
             return 0;
@@ -123,22 +110,47 @@ public:
 
         //encontraraltura(no->esq, n, h + 1);
         //encontraraltura(no->dir, n, h + 1); 
-        int altura_esquerda = encontraraltura(no->esq, n, h + 1);
-        int altura_direita = encontraraltura(no->dir, n, h + 1);
+        //printf("Cheeguei aqui\n");
+        int altura_esquerda = encontraraltura(no->esq, n);
+        int altura_direita = encontraraltura(no->dir, n);
 
+        //printf("Sou a altura esq: %d\n", altura_esquerda);
+        //printf("Sou a altura dir: %d\n", altura_direita);
         // Retorna a altura máxima encontrada entre os ramos esquerdo e direito
         return std::max(altura_esquerda, altura_direita);
     }
 
-    int fatordebalanceamento(No *no)
+    int calcularbalanceamento(No* no)
+    {
+        if (no == nullptr)
+            return 0;
+
+        int altura_esquerda = calcularaltura(no->esq);
+        int altura_direita = calcularaltura(no->dir);
+
+        // A altura do nó é o máximo entre a altura da subárvore esquerda e a da subárvore direita,
+        // mais 1 para contar o próprio nó.
+        return (1 + altura_esquerda) - (1 + altura_direita);
+    }
+
+    int fatordebalanceamento(No *no, int n)
     {
         if(no == nullptr)
             return 0;
 
-        int subarvoreesquerda = calcularaltura(no->esq);
-        int subarvoredireita = calcularaltura(no->dir);
+        if (no->chave == n)
+            return calcularbalanceamento(no);
 
-        return subarvoreesquerda - subarvoredireita;
+        int subarvoreesquerda = fatordebalanceamento(no->esq, n);
+        int subarvoredireita = fatordebalanceamento(no->dir, n);
+
+        //printf("Sou a subarvoreesquerda rsrs: %d\n", subarvoreesquerda);
+        //printf("Sou a subarvoredireita rsrs: %d\n", subarvoredireita);
+
+        if(subarvoreesquerda == 0 && subarvoredireita == 0)
+            return 0;
+        else
+            return (subarvoreesquerda != 0) ? subarvoreesquerda : subarvoredireita;
     }
 
     void PrintPorNivel()
@@ -164,14 +176,19 @@ public:
         }
     }
 
+    int produtodosnos(No* no)
+    {
+        if(no == nullptr)
+            return 1;
+        else
+            return no->chave*produtodosnos(no->esq)*produtodosnos(no->dir);
+    }
+
+
+
     int SomadasFolhas()
     {
         return somadasfolhas(raiz);
-    }
-
-    int ProdutodosNos()
-    {
-        return produtodosnos(raiz);
     }
 
     void PrintPreOrdem()
@@ -191,12 +208,17 @@ public:
 
     int CalcularAltura(int n)
     {
-        return encontraraltura(raiz, n, 1);
+        return encontraraltura(raiz, n);
     }
 
-    int CalcularFatordeBalanceamento()
+    int CalcularFatordeBalanceamento(int n)
     {
-        return fatordebalanceamento(raiz);
+        return fatordebalanceamento(raiz, n);
+    }
+
+    int ProdutodosNos()
+    {
+        return produtodosnos(raiz);
     }
 };
 
@@ -229,10 +251,10 @@ int main()
     printf("\n");
     arvore.PrintPosOrdem();
     printf("\n");
-    int hal = arvore.CalcularAltura(1);
+    int hal = arvore.CalcularAltura(8);
     std::cout << "Altura: " << hal << std::endl;
-    int bala = arvore.CalcularFatordeBalanceamento();
-    std::cout << "Altura: " << bala << std::endl;
+    int bala = arvore.CalcularFatordeBalanceamento(3);
+    std::cout << "Bala: " << bala << std::endl;
     arvore.PrintPorNivel();
     //std::cout << "Produto: " << preordem(no) << std::endl;
 
